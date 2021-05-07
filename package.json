@@ -1,0 +1,25 @@
+{
+  "name": "yx",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": { },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iwantyou/yx.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iwantyou/yx/issues"
+  },
+  "homepage": "https://github.com/iwantyou/yx#readme",
+  "dependencies": {
+    "mkdirp": "^1.0.4",
+    "ora": "^5.4.0",
+    "rimraf": "^3.0.2",
+    "yargs": "^17.0.1"
+  }
+}
