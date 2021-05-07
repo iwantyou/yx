@@ -1,0 +1,50 @@
+{
+  "pages": {
+    "index": {
+      "name": "主页",
+      "router": "/home",
+      "icon": "",
+      "pageName": "home"
+    },
+    "ar": {
+      "name": "ar条款管理",
+      "router": "/ar-clause",
+      "pageName": "ar",
+      "dirMode": true,
+      "subMenu": [
+        {
+          "name": "AR统一视图",
+          "router": "view",
+          "pageName": "view"
+        },
+        {
+          "name": "ar条款任务",
+          "router": "task",
+          "pageName": "task"
+        }
+      ]
+    },
+    "bill": {
+        "name": "首款管理",
+        "router": "/bill",
+        "pageName": "bill",
+        "subMenu": [
+          {
+            "name": "收款单据申请",
+            "router": "apply",
+            "pageName": "apply"
+          },
+          {
+            "name": "申请状态",
+            "router": "status",
+            "pageName": "status"
+          },
+          {
+            "name": "我的单据",
+            "router": "mybill",
+            "pageName": "mybill"
+          }
+        ]
+      }
+  }
+}
