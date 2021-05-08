@@ -21,6 +21,20 @@ const valit = Joi.object({
       router: Joi.string(),
       name: Joi.string(),
       code: Joi.string(),
+      icon: Joi.string(),
+      path: Joi.string(),
+      key: Joi.string(),
+      defaultLink: Joi.string(),
+      path: Joi.string(),
+      dirMode: Joi.boolean(),
+      subMenu: Joi.array().items(
+        Joi.object({
+          pageName: Joi.string(),
+          router: Joi.string(),
+          name: Joi.string(),
+          code: Joi.string(),
+        })
+      ),
     })
   ),
 });
@@ -76,10 +90,11 @@ const textUp = (str = "") => {
   }
   return res.join("");
 };
-const pathNor = (rpath="") => {
+const pathNor = (rpath = "") => {
+  if(!rpath) return ''
   return rpath.startsWith("/") ? rpath : "/" + rpath;
 };
-const xpath = (rpath="") => {
+const xpath = (rpath = "") => {
   return rpath.startsWith("/") ? rpath.replace(/^\//, "") : rpath;
 };
 // 文件的数据的序列化
@@ -143,10 +158,10 @@ const handleRouter = (data, template) => {
     }
   }
 };
-const mkdir = async (data, targetPath) => {
+const mkdir = async (data, targetPath, preRouter = "") => {
   try {
     //递归写入目录
-    for (let { pageName, subMenu = [], dirMode = false } of data) {
+    for (let { pageName, subMenu = [], dirMode = false, router: paRouter } of data) {
       mkdirp.sync(`${targetPath}/${pageName}`);
       if (!subMenu.length) {
         let r = await readFile(path.join(__dirname, "..", "tempateFile/index.tsx"));
@@ -157,7 +172,7 @@ const mkdir = async (data, targetPath) => {
           let router = "";
           for (let { pageName: fileName, router: ro } of subMenu) {
             f += `const ${textUp(fileName)} = lazy(() => import("./${fileName}"));`;
-            router += `<Route path="${pathNor(ro)}" render={(p) => <${textUp(fileName)} {...p} />} />`;
+            router += `<Route path="${pathNor(preRouter) + pathNor(paRouter) + pathNor(ro)}" render={(p) => <${textUp(fileName)} {...p} />} />`;
           }
           // 额外生成一个index.tsx文件
           const Tem = `//@ts-nocheck
@@ -179,11 +194,16 @@ const mkdir = async (data, targetPath) => {
           //   let r = await readFile(path.join(__dirname, "..", "tempateFile/mindex.tsx"));
           await writeFile(`${targetPath}/${pageName}/index.tsx`, Tem);
           // 遍历subMenu
-          mkdir(subMenu, `${targetPath}/${pageName}`);
+          mkdir(subMenu, `${targetPath}/${pageName}`, paRouter);
         } else {
           // 生成subMenu的文件
-          for (let { pageName: fileName } of subMenu) {
+          for (let { pageName: fileName, subMenu: childSubMenu = [], router: childRouter } of subMenu) {
             let r = await readFile(path.join(__dirname, "..", "tempateFile/index.tsx"));
+            // child的submenu生成
+            if (childSubMenu.length) {
+              mkdir(childSubMenu, `${targetPath}/${pageName}`, paRouter + childRouter);
+              continue;
+            }
             await writeFile(`${targetPath}/${pageName}/${fileName}.tsx`, r);
           }
         }

@@ -79,7 +79,9 @@ function init(argv) {
 }
 // 生成配置文件模版
 function generate(argv) {
-  const { name = "config" } = normalize(argv);
+  let { name } = normalize(argv);
+  console.log("name", name)
+  name = name ? name : "config"
   spin.start("正在生成配置文件");
   readTemplate()
     .then((data) => {
