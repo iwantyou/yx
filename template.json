@@ -1,50 +1,66 @@
 {
-  "pages": {
-    "index": {
-      "name": "主页",
-      "router": "/home",
-      "icon": "",
-      "pageName": "home"
+  "pages": [
+    {
+      "name": "首页",
+      "code": "home_page",
+      "icon": "shouye",
+      "router": "/",
+      "pageName": "index"
     },
-    "ar": {
-      "name": "ar条款管理",
+    {
+      "name": "AR条款管理",
+      "code": "home_page",
+      "icon": "ARtiaokuanguanli",
+      "path": "/ar-clause",
       "router": "/ar-clause",
+      "key": "/ar-clause",
+      "defaultLink": "/ar-clause/view",
       "pageName": "ar",
-      "dirMode": true,
       "subMenu": [
         {
           "name": "AR统一视图",
+          "code": "home_page",
           "router": "view",
           "pageName": "view"
         },
         {
-          "name": "ar条款任务",
+          "name": "AR条款任务",
+          "code": "home_page",
           "router": "task",
           "pageName": "task"
+        },
+        {
+          "name": "付款方式变更审批详情",
+          "code": "home_page",
+          "router": "payment",
+          "pageName": "payment"
         }
       ]
     },
-    "bill": {
-        "name": "首款管理",
-        "router": "/bill",
-        "pageName": "bill",
-        "subMenu": [
-          {
-            "name": "收款单据申请",
-            "router": "apply",
-            "pageName": "apply"
-          },
-          {
-            "name": "申请状态",
-            "router": "status",
-            "pageName": "status"
-          },
-          {
-            "name": "我的单据",
-            "router": "mybill",
-            "pageName": "mybill"
-          }
-        ]
-      }
-  }
+    {
+      "name": "AR客户相关",
+      "code": "home_page",
+      "icon": "ARkehuxiangguan",
+      "path": "/ar-customer",
+      "key": "/ar-customer",
+      "router": "/ar-customer",
+      "defaultLink": "/ar-customer/view",
+      "dirMode": true,
+      "pageName": "ar-customer",
+      "subMenu": [
+        {
+          "name": "AR客户相关",
+          "code": "home_page",
+          "router": "view",
+          "pageName": "customer-view"
+        },
+        {
+          "name": "客户询证函",
+          "code": "home_page",
+          "router": "confirmation",
+          "pageName": "customer-confirmation"
+        }
+      ]
+    }
+  ]
 }

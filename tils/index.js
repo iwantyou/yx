@@ -1,7 +1,30 @@
 const fs = require("fs");
 const path = require("path");
 const mkdirp = require("mkdirp");
+const Joi = require("joi");
+const ora = require("ora");
 
+const valit = Joi.object({
+  pageName: Joi.string().required(),
+  router: Joi.string().required(),
+  name: Joi.string().required(),
+  code: Joi.string(),
+  icon: Joi.string(),
+  path: Joi.string(),
+  key: Joi.string(),
+  defaultLink: Joi.string(),
+  path: Joi.string(),
+  dirMode: Joi.boolean(),
+  subMenu: Joi.array().items(
+    Joi.object({
+      pageName: Joi.string(),
+      router: Joi.string(),
+      name: Joi.string(),
+      code: Joi.string(),
+    })
+  ),
+});
+const spin = ora();
 const chmod = (filePath) => {
   if (fs.existsSync(filePath)) {
     try {
@@ -53,8 +76,11 @@ const textUp = (str = "") => {
   }
   return res.join("");
 };
-const pathNor = (rpath) => {
+const pathNor = (rpath="") => {
   return rpath.startsWith("/") ? rpath : "/" + rpath;
+};
+const xpath = (rpath="") => {
+  return rpath.startsWith("/") ? rpath.replace(/^\//, "") : rpath;
 };
 // 文件的数据的序列化
 const sourceNormal = (data, filter) => {
@@ -68,14 +94,19 @@ const sourceNormal = (data, filter) => {
   return value;
   function dfc(source, linkv = "") {
     for (let v of source) {
-      if (linkv) {
-        v.link = linkv + pathNor(v.router);
+      const { error } = valit.validate(v);
+      if (!error) {
+        if (linkv) {
+          v.link = linkv + pathNor(v.router);
+        } else if (!v.subMenu || !v.subMenu.length) {
+          v.link = v.router;
+        }
+        if (v.subMenu && Array.isArray(v.subMenu) && v.subMenu.length) {
+          dfc(v.subMenu, linkv + pathNor(v.router));
+        }
+        filter && filter(v);
       } else {
-        v.link = v.router;
-      }
-      filter && filter(v);
-      if (v.subMenu && Array.isArray(v.subMenu) && v.subMenu.length) {
-        dfc(v.subMenu, v.link);
+        throw new Error(error);
       }
     }
   }
@@ -103,8 +134,8 @@ const handleRouter = (data, template) => {
   for (let { pageName, dirMode = false, subMenu = [], link, router } of data) {
     if (dirMode || (!dirMode && !subMenu.length)) {
       template.r += `{
-        exact: true,
-        path: "${link ?? router}",
+        exact: ${!dirMode},
+        path: "${xpath(link ?? router)}",
         component: ${textUp(pageName)},
       },`;
     } else if (!dirMode && subMenu.length) {
@@ -145,7 +176,7 @@ const mkdir = async (data, targetPath) => {
             );
           }
           `;
-        //   let r = await readFile(path.join(__dirname, "..", "tempateFile/mindex.tsx"));
+          //   let r = await readFile(path.join(__dirname, "..", "tempateFile/mindex.tsx"));
           await writeFile(`${targetPath}/${pageName}/index.tsx`, Tem);
           // 遍历subMenu
           mkdir(subMenu, `${targetPath}/${pageName}`);

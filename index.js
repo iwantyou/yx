@@ -72,6 +72,7 @@ function init(argv) {
       spin.succeed("写入配置成功");
     } catch (err) {
       spin.fail("写入配置失败");
+      console.log(err)
       rimraf.sync(repoargv.project);
     }
   });
