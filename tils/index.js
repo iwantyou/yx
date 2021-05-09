@@ -191,7 +191,6 @@ const mkdir = async (data, targetPath, preRouter = "") => {
             );
           }
           `;
-          //   let r = await readFile(path.join(__dirname, "..", "tempateFile/mindex.tsx"));
           await writeFile(`${targetPath}/${pageName}/index.tsx`, Tem);
           // 遍历subMenu
           mkdir(subMenu, `${targetPath}/${pageName}`, paRouter);
