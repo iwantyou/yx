@@ -58,6 +58,9 @@ function init(argv) {
           Reflect.deleteProperty(v, "pageName");
           Reflect.deleteProperty(v, "router");
           Reflect.deleteProperty(v, "dirMode");
+          if(Reflect.has(v, "subMenu")){
+            Reflect.deleteProperty(v, "link");
+          }
         }),
         null,
         4

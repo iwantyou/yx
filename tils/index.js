@@ -2,43 +2,22 @@ const fs = require("fs");
 const path = require("path");
 const mkdirp = require("mkdirp");
 const Joi = require("joi");
-const ora = require("ora");
 
-const valit = Joi.object({
-  pageName: Joi.string().required(),
-  router: Joi.string().required(),
-  name: Joi.string().required(),
-  code: Joi.string(),
-  icon: Joi.string(),
-  path: Joi.string(),
-  key: Joi.string(),
-  defaultLink: Joi.string(),
-  path: Joi.string(),
-  dirMode: Joi.boolean(),
-  subMenu: Joi.array().items(
-    Joi.object({
-      pageName: Joi.string(),
-      router: Joi.string(),
-      name: Joi.string(),
-      code: Joi.string(),
-      icon: Joi.string(),
-      path: Joi.string(),
-      key: Joi.string(),
-      defaultLink: Joi.string(),
-      path: Joi.string(),
-      dirMode: Joi.boolean(),
-      subMenu: Joi.array().items(
-        Joi.object({
-          pageName: Joi.string(),
-          router: Joi.string(),
-          name: Joi.string(),
-          code: Joi.string(),
-        })
-      ),
-    })
-  ),
-});
-const spin = ora();
+const valit = Joi.array().items(
+  Joi.object({
+    pageName: Joi.string().required(),
+    router: Joi.string().required(),
+    name: Joi.string().required(),
+    code: Joi.string(),
+    icon: Joi.string(),
+    path: Joi.string(),
+    key: Joi.string(),
+    defaultLink: Joi.string(),
+    path: Joi.string(),
+    dirMode: Joi.boolean(),
+    subMenu: Joi.any(),
+  })
+);
 const chmod = (filePath) => {
   if (fs.existsSync(filePath)) {
     try {
@@ -91,7 +70,7 @@ const textUp = (str = "") => {
   return res.join("");
 };
 const pathNor = (rpath = "") => {
-  if(!rpath) return ''
+  if (!rpath) return "";
   return rpath.startsWith("/") ? rpath : "/" + rpath;
 };
 const xpath = (rpath = "") => {
@@ -101,6 +80,10 @@ const xpath = (rpath = "") => {
 const sourceNormal = (data, filter) => {
   let source = JSON.parse(data).pages || JSON.parse(data);
   let value = Object.values(source);
+  const { error } = valit.validate(value);
+  if (error) {
+    throw new Error(error);
+  }
   try {
     dfc(value);
   } catch (error) {
@@ -109,20 +92,15 @@ const sourceNormal = (data, filter) => {
   return value;
   function dfc(source, linkv = "") {
     for (let v of source) {
-      const { error } = valit.validate(v);
-      if (!error) {
-        if (linkv) {
-          v.link = linkv + pathNor(v.router);
-        } else if (!v.subMenu || !v.subMenu.length) {
-          v.link = v.router;
-        }
-        if (v.subMenu && Array.isArray(v.subMenu) && v.subMenu.length) {
-          dfc(v.subMenu, linkv + pathNor(v.router));
-        }
-        filter && filter(v);
-      } else {
-        throw new Error(error);
+      if (linkv) {
+        v.link = linkv + pathNor(v.router);
+      } else if (!v.subMenu || !v.subMenu.length) {
+        v.link = v.router;
       }
+      if (v.subMenu && Array.isArray(v.subMenu) && v.subMenu.length) {
+        dfc(v.subMenu, linkv + pathNor(v.router));
+      }
+      filter && filter(v);
     }
   }
 };
@@ -131,16 +109,18 @@ const handleCom = (data, template, prefix = "") => {
   // 生成页面位置
   while (++i < data.length) {
     let { pageName, subMenu = [], dirMode = false } = data[i];
+
     if (dirMode || (!dirMode && !subMenu.length)) {
       //  单个路由
-      template.str += `
-      const ${textUp(pageName)} = Loadable(() => import("src/pages/${prefix ? prefix + "/" : ""}${pageName}"), {
-            fallback: <Loading />,
-          });\n
-        `;
+  
+        template.str += `
+        const ${textUp(pageName)} = Loadable(() => import("src/pages/${prefix ? prefix + "/" : ""}${pageName}"), {
+              fallback: <Loading />,
+            });\n
+          `;
     } else if (!dirMode && subMenu.length) {
       //  多个路由 都写入router配置里
-      handleCom(subMenu, template, pageName);
+      handleCom(subMenu, template, `${prefix ? prefix + "/" : ""}${pageName}`);
     }
   }
 };
@@ -170,7 +150,7 @@ const mkdir = async (data, targetPath, preRouter = "") => {
         if (dirMode) {
           let f = ``;
           let router = "";
-          for (let { pageName: fileName, router: ro } of subMenu) {
+          for (let { pageName: fileName, router: ro, router:childRouter = false, subMenu:childSubMenu = [] } of subMenu) {
             f += `const ${textUp(fileName)} = lazy(() => import("./${fileName}"));`;
             router += `<Route path="${pathNor(preRouter) + pathNor(paRouter) + pathNor(ro)}" render={(p) => <${textUp(fileName)} {...p} />} />`;
           }
@@ -196,11 +176,12 @@ const mkdir = async (data, targetPath, preRouter = "") => {
           mkdir(subMenu, `${targetPath}/${pageName}`, paRouter);
         } else {
           // 生成subMenu的文件
-          for (let { pageName: fileName, subMenu: childSubMenu = [], router: childRouter } of subMenu) {
+          for (let v of subMenu) {
+            let { pageName: fileName, subMenu: childSubMenu = [], router: childRouter } = v
             let r = await readFile(path.join(__dirname, "..", "tempateFile/index.tsx"));
             // child的submenu生成
             if (childSubMenu.length) {
-              mkdir(childSubMenu, `${targetPath}/${pageName}`, paRouter + childRouter);
+              mkdir([v], `${targetPath}/${pageName}`, paRouter + childRouter);
               continue;
             }
             await writeFile(`${targetPath}/${pageName}/${fileName}.tsx`, r);
