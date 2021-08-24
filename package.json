@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "bin": {
-    "yx": "./index.js"
+    "lan": "./index.js"
   },
   "main": "index.js",
   "devDependencies": {},
