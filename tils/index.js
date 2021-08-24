@@ -3,6 +3,16 @@ const path = require("path");
 const mkdirp = require("mkdirp");
 const Joi = require("joi");
 
+// 序列化参数
+const normalize = (argv = {}) => {
+  const { repo, config = "", project = "", name = "" } = argv;
+  return {
+      url: repo,
+      config: path.join(process.cwd(), config),
+      project: path.join(process.cwd(), project, name),
+      name,
+  };
+};
 const valit = Joi.array().items(
   Joi.object({
     pageName: Joi.string().required(),
@@ -219,3 +229,4 @@ exports.chmod = chmod;
 exports.writeFile = writeFile;
 exports.sourceNormal = sourceNormal;
 exports.router = router;
+exports.normalize = normalize
