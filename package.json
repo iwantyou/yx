@@ -1,6 +1,6 @@
 {
   "name": "yx-gac",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "",
   "bin": {
     "yx": "./index.js"
@@ -12,7 +12,9 @@
     "type": "git",
     "url": "git+https://github.com/iwantyou/yx.git"
   },
-  "keywords": ["yx"],
+  "keywords": [
+    "yx"
+  ],
   "author": "duzb",
   "license": "ISC",
   "bugs": {
