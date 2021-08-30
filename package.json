@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "bin": {
-    "lan": "./index.js"
+    "yx": "./index.js"
   },
   "main": "index.js",
   "devDependencies": {},
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/iwantyou/yx.git"
   },
-  "keywords": [],
+  "keywords": ["yx"],
   "author": "duzb",
   "license": "ISC",
   "bugs": {
