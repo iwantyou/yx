@@ -16,3 +16,4 @@ jobs:
 branches:
     only:
         - tags
+        - master
