@@ -1,5 +1,14 @@
 language: node_js
 node_js: 14.5.0
+stages:
+  - test1
+  - test2
+  - deploy
+jobs:
+ include:
+  - script: echo -e "test1"
+  - script: echo -e "test2"
+  - script: echo -e "deploy"
 script: 
      - npm config list
 branches:
