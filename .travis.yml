@@ -1,5 +1,6 @@
 language: node_js
-node_js: 14.5.0
+node_js:
+    - 14.5.0
 stages:
   - test1
   - test2
