@@ -11,7 +11,7 @@ jobs:
               api_key: "${NPM_TOKEN}"
               on:
                   tags: true
-branches:
-      only:
-        - /^v(\d+)\.(\d+)\.(\d+)$/
-        - master
+# branches:
+#       only:
+        # - /^v(\d+)\.(\d+)\.(\d+)$/
+        # - master
