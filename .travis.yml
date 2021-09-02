@@ -5,8 +5,6 @@ node_js:
 jobs:
     include:
         - stage: deploy
-          script:
-              - echo -e "depolying..."
           deploy:
               provider: npm
               email: "${EMAIL}"
@@ -15,4 +13,5 @@ jobs:
                   tags: true
 branches:
       only:
-        - /^v\d+*$/
+        - /^v(\d+)\.(\d+)\.(\d+)$/
+        - master
