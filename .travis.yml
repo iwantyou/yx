@@ -15,5 +15,5 @@ jobs:
                   tags: true
 branches:
     only:
-        - tags
+        - tag
         # - masters
