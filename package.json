@@ -6,6 +6,13 @@
     "yx": "./index.js"
   },
   "main": "index.js",
+  "files": [
+    "command/**/*",
+    "tempateFile/*.tsx",
+    "tils/**/*",
+    "git-clone.js",
+    "template.json"
+  ],
   "devDependencies": {},
   "scripts": {},
   "repository": {
