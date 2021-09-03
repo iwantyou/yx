@@ -1,7 +1,11 @@
 language: node_js
 node_js:
     - 14.5.0
-
+#跳过默认的依赖下载和script脚本执行
+install: skip
+script: skip
+stages:
+  - name: deploy
 jobs:
     include:
         - stage: deploy
@@ -14,4 +18,3 @@ jobs:
 branches:
       only:
         - /^v(\d+)\.(\d+)\.(\d+)$/
-        # - master

@@ -3,6 +3,7 @@ const yargs = require("yargs");
 const ora = require("ora");
 const { init } = require("./command/init");
 const { generate } = require("./command/generate");
+const pkg = require("./package.json")
 
 let spin = ora();
 yargs(process.argv.slice(2))
@@ -26,5 +27,5 @@ yargs(process.argv.slice(2))
     .command("generate [name]", "生成配置模版config.json", {}, generate(spin))
     .help()
     .alias("h", "help")
-    .version("1.0.0")
+    .version(pkg.version)
     .alias("v", "version").argv;
